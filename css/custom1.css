@@ -1,0 +1,30 @@
+.date{
+    font-size: large;
+    font-weight: normal;
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: none;
+}
+.container {
+    position: relative; /* Positioning context for absolute image */
+    width: 200px; /* Adjust container width */
+    height: 300px; /* Adjust container height */
+    border: 10px solid #D3815B; /* Border color and thickness */
+    border-radius: 50%; /* Oval shape */
+    overflow: hidden; /* Remove overflow outside the border */
+    padding: 0; /* Ensure no extra padding */
+    margin: 0; /* Ensure no extra margin */
+}
+
+img {
+    position: absolute; /* Position image within the container */
+    top: 50%; /* Move image down 50% of container height */
+    left: 50%; /* Move image right 50% of container width */
+    transform: translate(-50%, -50%); /* Center perfectly */
+    width: 100%; /* Ensure the image is large enough to cover the oval */
+    height: auto; /* Maintain proportions */
+    object-fit: cover; /* Fill the container while maintaining aspect ratio */
+    object-position: center 30%;
+}
+.sidebar{
+    background-color: black;
+}
