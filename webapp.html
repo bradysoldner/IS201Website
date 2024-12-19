@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Mood Playlist Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #moodActivityInput {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #generateButton {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #generateButton:hover {
+            background-color: #45a049;
+        }
+
+        #playlist {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .song {
+            background-color: #f4f4f4;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Music Mood Playlist Generator</h1>
+    <input type="text" id="moodActivity" placeholder="Enter a mood or activity (e.g., happy, studying, etc.)">
+    <button id="generateButton" onclick="generatePlaylist()">Generate Playlist</button>
+    
+    <h3>Available moods/activities:</h3>
+    <ul>
+        <li>happy</li>
+        <li>sad</li>
+        <li>mad</li>
+        <li>running</li>
+        <li>exercising</li>
+        <li>studying</li>
+        <li>relaxing</li>
+        <li>partying</li>
+        <li>excited</li>
+        <li>scared</li>
+    </ul>
+    
+    <ul id="playlist"></ul>
+</div>
+
+<script>
+    // Song database for each mood/activity
+    const songDatabase = {
+        happy: [
+            "Happy - Pharrell Williams", "Can’t Stop the Feeling! - Justin Timberlake", "Uptown Funk - Mark Ronson ft. Bruno Mars", 
+            "I Gotta Feeling - The Black Eyed Peas", "Shake It Off - Taylor Swift", "On Top of the World - Imagine Dragons",
+            "Don’t Stop Believin’ - Journey", "Good as Hell - Lizzo", "Just Dance - Lady Gaga", "We Found Love - Rihanna ft. Calvin Harris", 
+            "Firework - Katy Perry", "Roar - Katy Perry", "Walking on Sunshine - Katrina & The Waves", "Count on Me - Bruno Mars", 
+            "Stronger - Kanye West", "Can’t Stop - Red Hot Chili Peppers", "Eye of the Tiger - Survivor", "Rude - MAGIC!", 
+            "Dynamite - BTS", "Happy Together - The Turtles", "Sugar - Maroon 5", "Don’t Worry, Be Happy - Bobby McFerrin", 
+            "Best Day of My Life - American Authors", "Good Time - Owl City & Carly Rae Jepsen", "Happy Now - Zedd ft. Elley Duhé"
+        ],
+        sad: [
+            "Someone Like You - Adele", "The Night We Met - Lord Huron", "Fix You - Coldplay", "Tears in Heaven - Eric Clapton", 
+            "Let Her Go - Passenger", "I Will Always Love You - Whitney Houston", "Hurt - Johnny Cash", "Yesterday - The Beatles", 
+            "Stay - Rihanna ft. Mikky Ekko", "Say Something - A Great Big World ft. Christina Aguilera", "All I Want - Kodaline", 
+            "I’m Not the Only One - Sam Smith", "Back to December - Taylor Swift", "Don’t Let Me Down - The Chainsmokers ft. Daya", 
+            "The A Team - Ed Sheeran", "Un-break My Heart - Toni Braxton", "When I Was Your Man - Bruno Mars", "Creep - Radiohead", 
+            "Let It Go - James Bay", "Jar of Hearts - Christina Perri", "Breathe Me - Sia", "I Am a Rock - Simon & Garfunkel", 
+            "Somewhere Over the Rainbow - Israel Kamakawiwo'ole", "My Heart Will Go On - Celine Dion", "Boys Don’t Cry - The Cure"
+        ],
+        mad: [
+            "Break Stuff - Limp Bizkit", "Bohemian Rhapsody - Queen", "Rolling in the Deep - Adele", "Smells Like Teen Spirit - Nirvana", 
+            "Fighter - Christina Aguilera", "Stronger - Kanye West", "Give Me Everything - Pitbull ft. Ne-Yo, Afrojack & Nayer", 
+            "Lose Yourself - Eminem", "Bitch Better Have My Money - Rihanna", "Killing in the Name - Rage Against the Machine", 
+            "You Oughta Know - Alanis Morissette", "Uprising - Muse", "Bad Guy - Billie Eilish", "No Scrubs - TLC", 
+            "Hotline Bling - Drake", "Irreplaceable - Beyoncé", "Rolling in the Deep - Adele", "I Hate Everything About You - Three Days Grace", 
+            "Praying - Kesha", "Rehab - Amy Winehouse", "The Way I Am - Eminem", "Take the Power Back - Rage Against the Machine", 
+            "You Don't Own Me - Grace ft. G-Eazy", "Just Like a Pill - P!nk", "Don't Let Me Down - The Chainsmokers ft. Daya"
+        ],
+        running: [
+            "Eye of the Tiger - Survivor", "Stronger - Kanye West", "Can’t Stop the Feeling! - Justin Timberlake", 
+            "Lose Yourself - Eminem", "Don’t Stop Believin’ - Journey", "We Will Rock You - Queen", "Jump Around - House of Pain", 
+            "Rock You Like a Hurricane - Scorpions", "Till I Collapse - Eminem", "Party Rock Anthem - LMFAO", "Titanium - David Guetta ft. Sia", 
+            "Remember the Name - Fort Minor", "I Will Survive - Gloria Gaynor", "On Top of the World - Imagine Dragons", 
+            "Born to Run - Bruce Springsteen", "Run the World (Girls) - Beyoncé", "Push It - Salt-N-Pepa", "Runaway Baby - Bruno Mars", 
+            "Can’t Hold Us - Macklemore & Ryan Lewis", "Stronger (What Doesn’t Kill You) - Kelly Clarkson", "Gonna Make You Sweat - C+C Music Factory", 
+            "Ain’t No Mountain High Enough - Marvin Gaye & Tammi Terrell", "Fight Song - Rachel Platten", "Chariots of Fire - Vangelis", 
+            "The Final Countdown - Europe"
+        ],
+        exercising: [
+            "Eye of the Tiger - Survivor", "Lose Yourself - Eminem", "Stronger - Kanye West", "Till I Collapse - Eminem", 
+            "Can’t Stop the Feeling! - Justin Timberlake", "Blame It on Me - Post Malone", "Rock Your Body - Justin Timberlake", 
+            "Don't Stop the Music - Rihanna", "Pump It - The Black Eyed Peas", "Just Dance - Lady Gaga", "Push It - Salt-N-Pepa", 
+            "Jump - Kris Kross", "We Will Rock You - Queen", "On Top of the World - Imagine Dragons", "Fighter - Christina Aguilera", 
+            "I'm On One - DJ Khaled ft. Drake, Rick Ross", "Scream & Shout - will.i.am ft. Britney Spears", "Stronger (What Doesn't Kill You) - Kelly Clarkson", 
+            "Good Feeling - Flo Rida", "Waka Waka (This Time for Africa) - Shakira", "Let’s Go - Calvin Harris ft. Ne-Yo", "Bodak Yellow - Cardi B", 
+            "Uptown Funk - Mark Ronson ft. Bruno Mars", "Feel This Moment - Pitbull ft. Christina Aguilera", "Take Over Control - Afrojack ft. Eva Simons", 
+            "Work Hard, Play Hard - Wiz Khalifa"
+        ],
+        studying: [
+            "Weightless - Marconi Union", "Clair de Lune - Debussy", "Sunrise - Norah Jones", "The Sound of Silence - Simon & Garfunkel", 
+            "River Flows in You - Yiruma", "Come Away with Me - Norah Jones", "Linger - The Cranberries", "Banana Pancakes - Jack Johnson", 
+            "A Thousand Years - Christina Perri", "Don’t Let Me Down - The Chainsmokers ft. Daya", "Stay - Rihanna ft. Mikky Ekko", 
+            "Hallelujah - Jeff Buckley", "Your Best American Girl - Mitski", "Somewhere Over the Rainbow - Israel Kamakawiwo'ole", 
+            "Here Comes the Sun - The Beatles", "Dreams - Fleetwood Mac", "The Night We Met - Lord Huron", "Waterfalls - TLC", 
+            "River - Joni Mitchell", "The A Team - Ed Sheeran", "The One That Got Away - Katy Perry", "My Heart Will Go On - Celine Dion", 
+            "Linger - The Cranberries", "Banana Pancakes - Jack Johnson", "Time - Pink Floyd"
+        ],
+        relaxing: [
+            "Clair de Lune - Debussy", "Sunrise - Norah Jones", "Banana Pancakes - Jack Johnson", "The Sound of Silence - Simon & Garfunkel", 
+            "Watermark - Enya", "Come Away with Me - Norah Jones", "Linger - The Cranberries", "Let It Be - The Beatles", 
+            "Don’t Let Me Down - The Chainsmokers ft. Daya", "A Thousand Years - Christina Perri", "Hallelujah - Jeff Buckley", 
+            "Stay - Rihanna ft. Mikky Ekko", "Your Best American Girl - Mitski", "Here Comes the Sun - The Beatles", 
+            "Somewhere Over the Rainbow - Israel Kamakawiwo'ole", "Dreams - Fleetwood Mac", "The Night We Met - Lord Huron", "Waterfalls - TLC", 
+            "River - Joni Mitchell", "The A Team - Ed Sheeran", "The One That Got Away - Katy Perry", "My Heart Will Go On - Celine Dion", 
+            "Linger - The Cranberries", "Sunrise - Norah Jones", "Come Away with Me - Norah Jones"
+        ],
+        partying: [
+        "Uptown Funk - Mark Ronson ft. Bruno Mars", "Can't Stop the Feeling! - Justin Timberlake", "Party Rock Anthem - LMFAO", 
+        "Dynamite - BTS", "I Gotta Feeling - The Black Eyed Peas", "Shake It Off - Taylor Swift", "On Top of the World - Imagine Dragons", 
+        "We Found Love - Rihanna ft. Calvin Harris", "Just Dance - Lady Gaga", "Firework - Katy Perry", "Don't Stop the Music - Rihanna", 
+        "Let's Go - Calvin Harris ft. Ne-Yo", "Starships - Nicki Minaj", "Call Me Maybe - Carly Rae Jepsen", "Waka Waka (This Time for Africa) - Shakira", 
+        "Boom Boom Pow - The Black Eyed Peas", "Turn Down for What - DJ Snake, Lil Jon", "Toxic - Britney Spears", "Tik Tok - Kesha", 
+        "Party in the USA - Miley Cyrus", "Scream & Shout - will.i.am ft. Britney Spears", "Yeah! - Usher ft. Lil Jon, Ludacris", 
+        "Don't Let Me Down - The Chainsmokers ft. Daya", "Chained to the Rhythm - Katy Perry", "Shotgun - George Ezra", 
+        "Club Can't Handle Me - Flo Rida ft. David Guetta"
+    ],
+    excited: [
+        "Eye of the Tiger - Survivor", "Stronger - Kanye West", "Can't Stop the Feeling! - Justin Timberlake", "Don't Stop Believin' - Journey", 
+        "Happy - Pharrell Williams", "Uptown Funk - Mark Ronson ft. Bruno Mars", "Good Time - Owl City & Carly Rae Jepsen", "Roar - Katy Perry", 
+        "Firework - Katy Perry", "Titanium - David Guetta ft. Sia", "Just Dance - Lady Gaga", "Let’s Go - Calvin Harris ft. Ne-Yo", "Party Rock Anthem - LMFAO", 
+        "On Top of the World - Imagine Dragons", "Counting Stars - OneRepublic", "Feel This Moment - Pitbull ft. Christina Aguilera", 
+        "Can't Hold Us - Macklemore & Ryan Lewis", "Waka Waka (This Time for Africa) - Shakira", "Raise Your Glass - P!nk", 
+        "Let's Dance - David Bowie", "Waving Flag - K'naan", "We Will Rock You - Queen", "Let's Get It Started - The Black Eyed Peas"
+    ],
+    scared: [
+        "Disturbia - Rihanna", "Thriller - Michael Jackson", "Ghostbusters - Ray Parker Jr.", "Somebody's Watching Me - Rockwell", 
+        "Spooky, Scary Skeletons - Andrew Gold", "Bury a Friend - Billie Eilish", "Highway to Hell - AC/DC", "Black Magic Woman - Santana", 
+        "The Monster - Eminem ft. Rihanna", "Monster Mash - Bobby Pickett", "Hells Bells - AC/DC", "Don't Fear the Reaper - Blue Öyster Cult", 
+        "Psycho - Muse", "The Addams Family Theme - Vic Mizzy", "Creep - Radiohead", "In the Air Tonight - Phil Collins", 
+        "Toxic - Britney Spears", "Time Warp - Rocky Horror Picture Show", "Halloween Theme - John Carpenter", "Sweet Dreams (Are Made of This) - Eurythmics", 
+        "Nightmare - Halsey", "One Way or Another - Blondie", "Running with the Wolves - AURORA", "Breathe Me - Sia", 
+        "The Kill (Bury Me) - Thirty Seconds to Mars"
+    ]
+    };
+
+    // Function to randomly pick 10 songs from the list
+    function getRandomSongs(songs) {
+        const shuffled = [...songs].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 10);
+    }
+
+    // Function to generate playlist based on mood/activity
+    function generatePlaylist() {
+        const moodActivity = document.getElementById('moodActivity').value.toLowerCase().trim();
+        const playlistContainer = document.getElementById('playlist');
+        playlistContainer.innerHTML = ''; // Clear existing playlist
+
+        if (songDatabase[moodActivity]) {
+            const songs = getRandomSongs(songDatabase[moodActivity]);
+            songs.forEach(song => {
+                const li = document.createElement('li');
+                li.classList.add('song');
+                li.textContent = song;
+                playlistContainer.appendChild(li);
+            });
+        } else {
+            playlistContainer.innerHTML = '<li class="song">Mood/Activity not recognized. Please try again.</li>';
+        }
+    }
+</script>
+
+</body>
+</html>
